@@ -2,117 +2,101 @@
 
 @section('content')
 <div class="container">
-    <h1>Product List</h1>
-    <a href="{{ route('products.create') }}" class="btn btn-success">Create Product</a>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($products as $product)
-                <tr>
-                    <td>{{ $product->name }}</td>
-                    <td>{{ $product->description }}</td>
-                    <td>${{ number_format($product->price, 2) }}</td>
-                    <td>
-                        <a href="{{ route('products.edit', $product) }}" class="btn btn-warning">Edit</a>
-                        <form action="{{ route('products.destroy', $product) }}" method="POST" style="display: inline;">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
+    <h1>Shoes And Apparel</h1>
+
+    @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+    @role('admin')
+       <a href="{{ route('products.create') }}" class="btn btn-success">Create Product</a>
+    @endrole
+    <!-- Shoes Section -->
+    <section>
+        <h2>Shoes</h2>
+        <div class="row">
+            @forelse($shoes as $product)
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ $product->image_path ? asset('storage/' . $product->image_path) : asset('no-image.png') }}" class="card-img-top" alt="{{ $product->name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $product->name }}</h5>
+                            <p class="card-text">{{ $product->description }}</p>
+                            <p class="card-text">$ {{ number_format($product->price, 2) }}</p>
+                            <a href="{{ route('products.show', $product) }}" class="btn btn-primary">Show</a>
+                            @role('user')
+                            <form action="{{ route('cart.add', $product) }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-success">Add to Cart</button>
+                            </form>
+                            @endrole
+                            @role('admin')
+                              <form action="{{ route('products.edit', $product) }}" method="GET" class="d-inline">
+                                  <button type="submit" class="btn btn-warning">Edit</button>
+                              </form>
+
+                            <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                            @endrole
+                            @role('user')
+                            <a href="{{ route('products.buy', ['product' => $product]) }}" class="btn btn-warning">Buy Now</a>
+                            @endrole
+                        </div>
+                    </div>
+                </div>
             @empty
-                <tr>
-                    <td class="no-products" colspan="4">No products found.</td>
-                </tr>
+                <div class="col">
+                    <p class="no-products">No shoes found.</p>
+                </div>
             @endforelse
-        </tbody>
-    </table>
+        </div>
+    </section>
+
+    <!-- Apparel Section -->
+    <section>
+        <h2>Apparel</h2>
+        <div class="row">
+            @forelse($apparel as $product)
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ $product->image_path ? asset('storage/' . $product->image_path) : asset('no-image.png') }}" class="card-img-top" alt="{{ $product->name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $product->name }}</h5>
+                            <p class="card-text">{{ $product->description }}</p>
+                            <p class="card-text">$ {{ number_format($product->price, 2) }}</p>
+                            <a href="{{ route('products.show', $product) }}" class="btn btn-primary">Show</a>
+                            @role('user')
+                            <form action="{{ route('cart.add', $product) }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-success">Add to Cart</button>
+                            </form>
+                            @endrole
+                            @role('admin')
+                            <form action="{{ route('products.edit', $product) }}" method="GET" class="d-inline">
+                                <button type="submit" class="btn btn-warning">Edit</button>
+                            </form>
+                            <form action="{{ route('products.destroy', $product) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                            @endrole
+                            @role('user')
+                            <a href="{{ route('products.buy', ['product' => $product]) }}"  class="btn btn-warning">Buy Now</a>
+                            @endrole
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col">
+                    <p class="no-products">No apparel found.</p>
+                </div>
+            @endforelse
+        </div>
+    </section>
 </div>
 @endsection
-<style scoped>
-    /* public/css/styles.css */
-
-
-h1 {
-    color: #333;
-}
-
-.btn-success {
-    background-color: #28a745;
-    border-color: #28a745;
-    color: white;
-    font-weight: bold;
-}
-
-.btn-success:hover {
-    background-color: #218838;
-    border-color: #1e7e34;
-}
-
-.btn-warning {
-    background-color: #ffc107;
-    border-color: #ffc107;
-}
-
-.btn-warning:hover {
-    background-color: #e0a800;
-    border-color: #d39e00;
-}
-
-.btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
-}
-
-.btn-danger:hover {
-    background-color: #c82333;
-    border-color: #bd2130;
-}
-
-.table {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    border-collapse: collapse;
-    border: 1px solid #ddd;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-table thead th {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-}
-
-table tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-table tbody tr:hover {
-    background-color: #ddd;
-}
-
-table tbody td {
-    padding: 10px;
-    text-align: left;
-    vertical-align: middle;
-}
-
-.text-center {
-    text-align: center;
-}
-
-.no-products {
-    font-weight: bold;
-    color: #333;
-}
-
-</style>

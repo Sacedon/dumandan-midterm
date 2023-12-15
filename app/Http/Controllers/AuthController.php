@@ -14,14 +14,14 @@ class AuthController extends Controller
 {
     public function loginForm() {
         if (auth()->check()) {
-            return redirect()->route('books.index'); // Redirect authenticated users to the dashboard
+            return redirect()->route('products.index'); // Redirect authenticated users to the dashboard
         }
         return view('auth.login');
     }
 
     public function registerForm() {
         if (auth()->check()) {
-            return redirect()->route('books.index'); // Redirect authenticated users to the dashboard
+            return redirect()->route('products.index'); // Redirect authenticated users to the dashboard
         }
 
         return view('auth.register');
